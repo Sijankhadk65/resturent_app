@@ -42,14 +42,10 @@ class OrderScreenState extends State<OrderScreen> {
                     else
                       return GridView.count(
                         crossAxisCount: 2,
-                        children:snapshot.data.documents.map((f) => floors.FloorButtons(f)).toList(),
+                        children: snapshot.data.documents
+                            .map((f) => floors.FloorButtons(f))
+                            .toList(),
                       );
-                      // ListView(
-                      //     shrinkWrap: true,
-                      //     children: snapshot.data.documents
-                      //         .map((DocumentSnapshot document) {
-                      //       return FloorButton(document);
-                      //     }).toList());
                 }
               },
             ),
@@ -59,5 +55,3 @@ class OrderScreenState extends State<OrderScreen> {
     );
   }
 }
-
-

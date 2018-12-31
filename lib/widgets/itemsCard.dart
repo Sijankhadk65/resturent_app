@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'quantityChanger.dart' as changer;
+import 'stepperTouch.dart';
+// import 'package:stepper_touch/stepper_touch.dart';
+// import 'quantityChanger.dart' as changer;
 
 class itemsCard extends StatefulWidget {
   String itemName;
   int itemPrice, itemQty;
-  Function onSub, onAdd;
+  Function onChanged;
   itemsCard(
-      {this.itemName, this.itemPrice, this.itemQty, this.onSub, this.onAdd});
+      {this.itemName, this.itemPrice, this.itemQty,this.onChanged});
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -20,10 +22,11 @@ class _cardState extends State<itemsCard> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-        margin: EdgeInsets.only(bottom: 12.5, left: 15.0, right: 15.0,top: 12.5),
+        margin:
+            EdgeInsets.only(bottom: 12.5, left: 15.0, right: 15.0, top: 12.5),
         padding: EdgeInsets.all(15.0),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.blue,
             boxShadow: [
               BoxShadow(
                   color: Colors.grey,
@@ -46,18 +49,23 @@ class _cardState extends State<itemsCard> {
                         fontWeight: FontWeight.w600),
                   ),
                 ),
-                changer.quantityChanger(
-                    Icon(
-                      Icons.add_circle_outline,
-                      color: Colors.cyan,
-                    ),
-                    widget.onAdd),
-                changer.quantityChanger(
-                    Icon(
-                      Icons.remove_circle_outline,
-                      color: Colors.red,
-                    ),
-                    widget.onSub),
+                StepperTouch(
+                  initialValue: widget.itemQty,
+                  onChanged: widget.onChanged,
+                  withSpring: false,
+                )
+                // changer.quantityChanger(
+                //     Icon(
+                //       Icons.add_circle_outline,
+                //       color: Colors.cyan,
+                //     ),
+                //     widget.onAdd),
+                // changer.quantityChanger(
+                //     Icon(
+                //       Icons.remove_circle_outline,
+                //       color: Colors.red,
+                //     ),
+                //     widget.onSub),
               ],
             ),
             Divider(),

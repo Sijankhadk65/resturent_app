@@ -224,39 +224,29 @@ class _OrderItemsState extends State<OrderItems> {
                 physics: ClampingScrollPhysics(),
                 itemBuilder: (context, index) {
                   return itemCard.itemsCard(
-                      itemName: order.elementAt(index).name,
-                      itemPrice: order.elementAt(index).price,
-                      itemQty: order.elementAt(index).qty,
-                      onAdd: () {
+                    itemName: order.elementAt(index).name,
+                    itemPrice: order.elementAt(index).price,
+                    itemQty: order.elementAt(index).qty,
+                    onChanged: (int value) {
+                      if (value >= 0) {
                         this.setState(() {
-                          order.elementAt(index).qty++;
-                          order.elementAt(index).totalPrice =
-                              order.elementAt(index).price *
-                                  order.elementAt(index).qty;
-                          totalPrice += order.elementAt(index).totalPrice;
+                          order.elementAt(index).qty = value;
                         });
                         this.setState(() {
                           orderData['items'] =
                               order.map<dynamic>((f) => f.toJson()).toList();
                         });
-                      },
-                      onSub: () {
-                        if (order.elementAt(index).qty <= 0) {
-                          Scaffold.of(context).showSnackBar(
-                              SnackBar(content: Text("Item is not available")));
+                      } else {
+                        this.setState(() {
                           order.removeAt(index);
-                          orderData['items'] = order;
-                        } else {
-                          order.elementAt(index).qty--;
-                          order.elementAt(index).totalPrice =
-                              order.elementAt(index).price *
-                                  order.elementAt(index).qty;
-                          this.setState(() {
-                            orderData['items'] =
-                                order.map<dynamic>((f) => f.toJson()).toList();
-                          });
-                        }
-                      });
+                          orderData['items'] =
+                              order.map<dynamic>((f) => f.toJson()).toList();
+                        });
+                        Scaffold.of(context).showSnackBar(
+                            SnackBar(content: Text("Item is not available")));
+                      }
+                    },
+                  );
                 },
               )
       ],
@@ -319,7 +309,7 @@ class SearchMenu extends SearchDelegate<String> {
     } else {
       errorMsg = "Can't be added";
     }
-      return Container(
+    return Container(
         child: (isComplete != true && hasErrors == false && canAdd == true)
             ? Text("Added")
             : Text("$errorMsg"));

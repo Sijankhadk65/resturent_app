@@ -1,9 +1,6 @@
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 
-import '../classes/categoryItems.dart';
-import '../classes/menu_items.dart';
-
 import 'menuItemsDisplayer.dart' as itemsDisplay;
 
 class menuBuilder extends StatefulWidget {
@@ -53,6 +50,7 @@ class _BuilderState extends State<menuBuilder> {
                           fontFamily: "nuito"),
                     ),
                     ListView(
+                        physics: ClampingScrollPhysics(),
                         shrinkWrap: true,
                         children: snapshot.data.documents
                             .map<Widget>((document) =>

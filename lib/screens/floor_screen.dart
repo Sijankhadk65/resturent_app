@@ -29,6 +29,8 @@ class FloorScreenState extends State<FloorScreen> {
       child: Column(
         children: <Widget>[
           Container(
+            color: Colors.green
+            ,
             child: Center(
               child: Text(
                 "${widget.name}",

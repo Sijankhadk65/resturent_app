@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import "screens/homeScreen.dart";
 
+import "classes/colorsScheme.dart" as scheme;
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -8,7 +10,7 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: 'Hotel Yak & Yeti',
       theme: buildThemeData(),
-      home: MyHomePage(),
+      home: SafeArea(child: MyHomePage()),
     );
   }
 }
@@ -16,13 +18,17 @@ class MyApp extends StatelessWidget {
 ThemeData buildThemeData() {
   final appTheme = ThemeData.light();
   return appTheme.copyWith(
-      primaryColor: Colors.deepOrange[400],
-      primaryColorDark: Colors.deepOrangeAccent[200],
-      accentColor: Colors.blueGrey,
+      primaryColor: scheme.colorScheme().primaryColor,
+      accentColor: scheme.colorScheme().accentColor,
       tabBarTheme: TabBarTheme(
           indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: Colors.blueGrey, width: 3.0))),
-      buttonTheme: ButtonThemeData(
-        buttonColor: Colors.blueGrey,
-      ));
+              borderSide: BorderSide(
+                  color: scheme.colorScheme().accentColor, width: 3)
+            )),
+      textTheme: TextTheme(
+        body1: TextStyle(
+          color: scheme.colorScheme().body1,
+        ),
+      )
+      );
 }
