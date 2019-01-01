@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../widgets/tableCards.dart' as tableCards;
 
-
 class Floor extends StatelessWidget {
   final String docId, floorName;
   Floor(this.docId, this.floorName);
@@ -29,18 +28,12 @@ class FloorScreenState extends State<FloorScreen> {
       child: Column(
         children: <Widget>[
           Container(
-            color: Colors.green
-            ,
+            color: Colors.green,
             child: Center(
-              child: Text(
-                "${widget.name}",
-                style:TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w600
-                )
-              ),
+              child: Text("${widget.name}",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600)),
             ),
-            margin: EdgeInsets.only(bottom: 15.0,top:15.0),
+            margin: EdgeInsets.only(bottom: 15.0, top: 15.0),
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
@@ -60,7 +53,9 @@ class FloorScreenState extends State<FloorScreen> {
                     else
                       return GridView.count(
                         crossAxisCount: 2,
-                        children: snapshot.data.documents.map((f) => tableCards.TableCards(f)).toList(),
+                        children: snapshot.data.documents
+                            .map((f) => tableCards.TableCards(f))
+                            .toList(),
                       );
                 }
               },
@@ -71,5 +66,3 @@ class FloorScreenState extends State<FloorScreen> {
     );
   }
 }
-
-

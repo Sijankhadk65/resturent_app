@@ -7,6 +7,8 @@ import '../classes/order.dart';
 
 import "../widgets/itemsCard.dart" as itemCard;
 
+import '../classes/colorsScheme.dart';
+
 Map<String, dynamic> orderData = Map<String, dynamic>();
 Map<String, dynamic> tableData = Map<String, dynamic>();
 List<menuItem> menu = List();
@@ -127,16 +129,24 @@ class _OrderState extends State<FoodOrderScreen> {
                 if (snapshot.hasError)
                   return Text('Error: ${snapshot.error}');
                 else
-                  return ListView(
-                      shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
-                      children: snapshot.data.documents
-                          .map((DocumentSnapshot document) {
-                        orderData = document.data;
-                        docID = document.documentID;
-                        return OrderItems(
-                            document['items'], document['totalPrice']);
-                      }).toList());
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: ListView(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            children: snapshot.data.documents
+                                .map((DocumentSnapshot document) {
+                              orderData = document.data;
+                              docID = document.documentID;
+                              return OrderItems(
+                                  document['items'], document['totalPrice']);
+                            }).toList()),
+                      ),
+                    ],
+                  );
             }
           },
         ),
@@ -228,13 +238,23 @@ class _OrderItemsState extends State<OrderItems> {
                     itemPrice: order.elementAt(index).price,
                     itemQty: order.elementAt(index).qty,
                     onChanged: (int value) {
-                      if (value >= 0) {
+                      if (value > 0) {
                         this.setState(() {
+                          totalPrice =
+                              totalPrice - order.elementAt(index).totalPrice;
                           order.elementAt(index).qty = value;
+                          order.elementAt(index).totalPrice =
+                              order.elementAt(index).qty *
+                                  order.elementAt(index).price;
+                        });
+                        this.setState(() {
+                          totalPrice =
+                              totalPrice + order.elementAt(index).totalPrice;
                         });
                         this.setState(() {
                           orderData['items'] =
                               order.map<dynamic>((f) => f.toJson()).toList();
+                          orderData['totalPrice'] = totalPrice;
                         });
                       } else {
                         this.setState(() {
@@ -243,7 +263,7 @@ class _OrderItemsState extends State<OrderItems> {
                               order.map<dynamic>((f) => f.toJson()).toList();
                         });
                         Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text("Item is not available")));
+                            SnackBar(content: Text("Item is removed!")));
                       }
                     },
                   );
@@ -297,6 +317,7 @@ class SearchMenu extends SearchDelegate<String> {
           newItem.elementAt(0).price, 1, newItem.elementAt(0).price));
       orderData['items'] = order.map<dynamic>((f) => f.toJson()).toList();
       totalPrice += newItem.elementAt(0).price;
+      orderData['totalPrice'] = totalPrice;
       DocumentReference documentReference =
           Firestore.instance.collection("orders").document(docID);
       documentReference.updateData(orderData).whenComplete(() {

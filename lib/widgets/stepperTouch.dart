@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
+import '../classes/colorsScheme.dart';
+
 class StepperTouch extends StatefulWidget {
   const StepperTouch({
     Key key,
@@ -85,10 +87,14 @@ class _Stepper2State extends State<StepperTouch>
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              Positioned(
+              _value > 1 ? Positioned(
                 left: widget.direction == Axis.horizontal ? 10.0 : null,
                 bottom: widget.direction == Axis.horizontal ? null : 10.0,
                 child: Icon(Icons.remove, size: 10.0, color: Colors.white),
+              ) : Positioned(
+                left: widget.direction == Axis.horizontal ? 10.0 : null,
+                bottom: widget.direction == Axis.horizontal ? null : 10.0,
+                child: Icon(Icons.delete_forever, size: 10.0, color: Colors.white),
               ),
               Positioned(
                 right: widget.direction == Axis.horizontal ? 10.0 : null,
@@ -117,7 +123,7 @@ class _Stepper2State extends State<StepperTouch>
                           '${_value >= 0 ? _value : 0 }',
                           key: ValueKey<int>(_value),
                           style: TextStyle(
-                              color: Color(0xFF6D72FF), fontSize: 15.0),
+                              color:colorScheme().body2, fontSize: 12.0),
                         ),
                       ),
                     ),

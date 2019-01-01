@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'stepperTouch.dart';
-// import 'package:stepper_touch/stepper_touch.dart';
-// import 'quantityChanger.dart' as changer;
+
+import '../classes/colorsScheme.dart';
 
 class itemsCard extends StatefulWidget {
   String itemName;
   int itemPrice, itemQty;
   Function onChanged;
-  itemsCard(
-      {this.itemName, this.itemPrice, this.itemQty,this.onChanged});
+  itemsCard({this.itemName, this.itemPrice, this.itemQty, this.onChanged});
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -26,7 +25,14 @@ class _cardState extends State<itemsCard> {
             EdgeInsets.only(bottom: 12.5, left: 15.0, right: 15.0, top: 12.5),
         padding: EdgeInsets.all(15.0),
         decoration: BoxDecoration(
-            color: Colors.blue,
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colorScheme().body2,
+                  Color(0xFF3F324D),
+                  colorScheme().body1
+                ]),
             boxShadow: [
               BoxShadow(
                   color: Colors.grey,
@@ -46,7 +52,8 @@ class _cardState extends State<itemsCard> {
                     style: TextStyle(
                         fontFamily: "mon",
                         fontSize: 25.0,
-                        fontWeight: FontWeight.w600),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
                   ),
                 ),
                 StepperTouch(
@@ -75,12 +82,14 @@ class _cardState extends State<itemsCard> {
                   child: Transform(
                     transform: Matrix4.identity()..scale(0.9),
                     child: Chip(
+                      backgroundColor: Colors.white,
                       label: Text(
-                        "Quantity: ${widget.itemQty}",
+                        "Total: ${widget.itemQty * widget.itemPrice}",
                         style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 11.5,
-                            fontFamily: "Ost"),
+                          color: colorScheme().accentColor,
+                          fontSize: 11.5,
+                          fontFamily: "Ost",
+                        ),
                       ),
                     ),
                   ),
@@ -88,10 +97,11 @@ class _cardState extends State<itemsCard> {
                 Transform(
                   transform: Matrix4.identity()..scale(0.9),
                   child: Chip(
+                    backgroundColor: Colors.white,
                     label: Text(
                       "Price: ${widget.itemPrice}",
                       style: TextStyle(
-                          color: Colors.grey,
+                          color: colorScheme().accentColor,
                           fontSize: 11.5,
                           fontFamily: "Ost"),
                     ),
