@@ -106,6 +106,16 @@ class _OrderState extends State<FoodOrderScreen> {
             style: TextStyle(fontSize: 30.0, fontFamily: "Ost"),
           ),
           actions: <Widget>[
+            Chip(
+              backgroundColor: colorScheme().body1,
+              label: Text(
+                "Total: $totalPrice",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: "mon",
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
             IconButton(
               icon: Icon(Icons.add_circle_outline),
               onPressed: () {
@@ -255,12 +265,17 @@ class _OrderItemsState extends State<OrderItems> {
                           orderData['items'] =
                               order.map<dynamic>((f) => f.toJson()).toList();
                           orderData['totalPrice'] = totalPrice;
+                          print(totalPrice);
                         });
                       } else {
                         this.setState(() {
-                          order.removeAt(index);
+                          totalPrice -= order.elementAt(index).totalPrice;
+                          order.removeWhere((item) =>
+                              item.name == order.elementAt(index).name);
                           orderData['items'] =
                               order.map<dynamic>((f) => f.toJson()).toList();
+                          orderData['totalPrice'] = totalPrice;
+                          print(order.length);
                         });
                         Scaffold.of(context).showSnackBar(
                             SnackBar(content: Text("Item is removed!")));
@@ -279,10 +294,10 @@ class SearchMenu extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () => query = "",
-      )
+      // IconButton(
+      //   icon: Icon(Icons.clear),
+      //   onPressed: () => query = "",
+      // )
     ];
   }
 
@@ -304,8 +319,6 @@ class SearchMenu extends SearchDelegate<String> {
     final newItem = menu.where((item) => item.name == query);
     bool canAdd = true;
     bool isComplete = false;
-    bool hasErrors = false;
-    String errorMsg = "";
     order.forEach((orders) {
       if (orders.name == newItem.elementAt(0).name) {
         canAdd = false;
@@ -321,19 +334,17 @@ class SearchMenu extends SearchDelegate<String> {
       DocumentReference documentReference =
           Firestore.instance.collection("orders").document(docID);
       documentReference.updateData(orderData).whenComplete(() {
-        return Container(
-          child: Text("Addded"),
-        );
+        isComplete = true;
       }).catchError((error) {
-        hasErrors = true;
+        print("$error");
       });
     } else {
-      errorMsg = "Can't be added";
+      print("Can't be Added");
     }
-    return Container(
-        child: (isComplete != true && hasErrors == false && canAdd == true)
-            ? Text("Added")
-            : Text("$errorMsg"));
+    // while (!isComplete) {
+    //   return Center(child: CircularProgressIndicator());
+    // }
+    return Container(child: Text("$isComplete"));
   }
 
   @override

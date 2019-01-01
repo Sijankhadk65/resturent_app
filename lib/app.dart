@@ -18,17 +18,11 @@ class MyApp extends StatelessWidget {
 ThemeData buildThemeData() {
   final appTheme = ThemeData.light();
   return appTheme.copyWith(
-      primaryColor: scheme.colorScheme().primaryColor,
-      accentColor: scheme.colorScheme().accentColor,
-      tabBarTheme: TabBarTheme(
-          indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(
-                  color: scheme.colorScheme().accentColor, width: 3)
-            )),
-      textTheme: TextTheme(
-        body1: TextStyle(
-          color: scheme.colorScheme().body1,
-        ),
-      )
-      );
+    primaryColor: scheme.colorScheme().primaryColor,
+    accentColor: scheme.colorScheme().accentColor,
+    tabBarTheme: TabBarTheme(
+        indicator: UnderlineTabIndicator(
+            borderSide:
+                BorderSide(color: scheme.colorScheme().accentColor, width: 3))),
+  );
 }

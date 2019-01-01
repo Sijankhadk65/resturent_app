@@ -61,18 +61,6 @@ class _cardState extends State<itemsCard> {
                   onChanged: widget.onChanged,
                   withSpring: false,
                 )
-                // changer.quantityChanger(
-                //     Icon(
-                //       Icons.add_circle_outline,
-                //       color: Colors.cyan,
-                //     ),
-                //     widget.onAdd),
-                // changer.quantityChanger(
-                //     Icon(
-                //       Icons.remove_circle_outline,
-                //       color: Colors.red,
-                //     ),
-                //     widget.onSub),
               ],
             ),
             Divider(),
@@ -99,7 +87,7 @@ class _cardState extends State<itemsCard> {
                   child: Chip(
                     backgroundColor: Colors.white,
                     label: Text(
-                      "Price: ${widget.itemPrice}",
+                      "Unit Price: ${widget.itemPrice}",
                       style: TextStyle(
                           color: colorScheme().accentColor,
                           fontSize: 11.5,

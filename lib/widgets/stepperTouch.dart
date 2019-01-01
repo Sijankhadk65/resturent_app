@@ -40,7 +40,7 @@ class _Stepper2State extends State<StepperTouch>
   @override
   void initState() {
     super.initState();
-    _value = widget.initialValue ?? 0;
+    _value = widget.initialValue;
     _controller =
         AnimationController(vsync: this, lowerBound: -0.5, upperBound: 0.5);
     _controller.value = 0.0;
@@ -77,8 +77,8 @@ class _Stepper2State extends State<StepperTouch>
   Widget build(BuildContext context) {
     return FittedBox(
       child: Container(
-        width: widget.direction == Axis.horizontal ? 80.0 : 120.0,
-        height: widget.direction == Axis.horizontal ? 20.0 : 280.0,
+        width: widget.direction == Axis.horizontal ? 90.0 : 120.0,
+        height: widget.direction == Axis.horizontal ? 30.0 : 280.0,
         child: Material(
           type: MaterialType.canvas,
           clipBehavior: Clip.antiAlias,
@@ -90,16 +90,16 @@ class _Stepper2State extends State<StepperTouch>
               _value > 1 ? Positioned(
                 left: widget.direction == Axis.horizontal ? 10.0 : null,
                 bottom: widget.direction == Axis.horizontal ? null : 10.0,
-                child: Icon(Icons.remove, size: 10.0, color: Colors.white),
+                child: Icon(Icons.remove, size: 12.0, color: Colors.white),
               ) : Positioned(
                 left: widget.direction == Axis.horizontal ? 10.0 : null,
                 bottom: widget.direction == Axis.horizontal ? null : 10.0,
-                child: Icon(Icons.delete_forever, size: 10.0, color: Colors.white),
+                child: Icon(Icons.delete_forever, size: 12.0, color: Colors.white),
               ),
               Positioned(
                 right: widget.direction == Axis.horizontal ? 10.0 : null,
                 top: widget.direction == Axis.horizontal ? null : 10.0,
-                child: Icon(Icons.add, size: 10.0, color: Colors.white),
+                child: Icon(Icons.add, size: 12.0, color: Colors.white),
               ),
               GestureDetector(
                 onHorizontalDragStart: _onPanStart,
@@ -123,7 +123,7 @@ class _Stepper2State extends State<StepperTouch>
                           '${_value >= 0 ? _value : 0 }',
                           key: ValueKey<int>(_value),
                           style: TextStyle(
-                              color:colorScheme().body2, fontSize: 12.0),
+                              color:colorScheme().body2, fontSize: 13.0),
                         ),
                       ),
                     ),
