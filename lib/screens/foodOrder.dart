@@ -11,6 +11,7 @@ import '../classes/colorsScheme.dart';
 
 Map<String, dynamic> orderData = Map<String, dynamic>();
 Map<String, dynamic> tableData = Map<String, dynamic>();
+
 List<menuItem> menu = List();
 List<customerOrderData> order = List();
 String docID = "";
@@ -37,14 +38,6 @@ class FoodOrderScreen extends StatefulWidget {
 }
 
 class _OrderState extends State<FoodOrderScreen> {
-  void addItem(List<menuItem> item) {
-    this.setState(() {
-      order.add(new customerOrderData(item.elementAt(0).name,
-          item.elementAt(0).price, 1, item.elementAt(0).price));
-      orderData['items'] = order.map((f) => f.toJson()).toList();
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -75,9 +68,7 @@ class _OrderState extends State<FoodOrderScreen> {
                 "table": tableID,
                 "totalPrice": 0
               };
-              cr.add(initialOrder).whenComplete(() {
-                print("Initial Order Created");
-              }).catchError((error) {
+              cr.add(initialOrder).whenComplete(() {}).catchError((error) {
                 print(error);
               });
             }).catchError((error) {
@@ -93,6 +84,7 @@ class _OrderState extends State<FoodOrderScreen> {
   void dispose() {
     super.dispose();
     menu.clear();
+    totalPrice = 0;
   }
 
   @override
@@ -106,7 +98,16 @@ class _OrderState extends State<FoodOrderScreen> {
             style: TextStyle(fontSize: 30.0, fontFamily: "Ost"),
           ),
           actions: <Widget>[
-            Chip(
+            IconButton(
+              icon: Icon(Icons.add_circle_outline),
+              onPressed: () async {
+                await showSearch(context: context, delegate: SearchMenu());
+              },
+            )
+          ],
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(30.0),
+            child: Chip(
               backgroundColor: colorScheme().body1,
               label: Text(
                 "Total: $totalPrice",
@@ -116,13 +117,7 @@ class _OrderState extends State<FoodOrderScreen> {
                     fontWeight: FontWeight.w600),
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.add_circle_outline),
-              onPressed: () {
-                showSearch(context: context, delegate: SearchMenu());
-              },
-            )
-          ],
+          ),
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream: Firestore.instance
@@ -168,7 +163,11 @@ class _OrderState extends State<FoodOrderScreen> {
                 if (docID != "") {
                   DocumentReference documentReference =
                       Firestore.instance.collection("orders").document(docID);
-                  documentReference.updateData(orderData).whenComplete(() {
+                  documentReference.updateData(orderData).then((someData) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text("Adding New Item"),
+                    ));
+                  }).whenComplete(() {
                     Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text("Updated"),
                     ));
@@ -243,44 +242,63 @@ class _OrderItemsState extends State<OrderItems> {
                 itemCount: order.length,
                 physics: ClampingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return itemCard.itemsCard(
-                    itemName: order.elementAt(index).name,
-                    itemPrice: order.elementAt(index).price,
-                    itemQty: order.elementAt(index).qty,
-                    onChanged: (int value) {
-                      if (value > 0) {
-                        this.setState(() {
-                          totalPrice =
-                              totalPrice - order.elementAt(index).totalPrice;
-                          order.elementAt(index).qty = value;
-                          order.elementAt(index).totalPrice =
-                              order.elementAt(index).qty *
-                                  order.elementAt(index).price;
-                        });
-                        this.setState(() {
-                          totalPrice =
-                              totalPrice + order.elementAt(index).totalPrice;
-                        });
-                        this.setState(() {
-                          orderData['items'] =
-                              order.map<dynamic>((f) => f.toJson()).toList();
-                          orderData['totalPrice'] = totalPrice;
-                          print(totalPrice);
-                        });
-                      } else {
-                        this.setState(() {
-                          totalPrice -= order.elementAt(index).totalPrice;
-                          order.removeWhere((item) =>
-                              item.name == order.elementAt(index).name);
-                          orderData['items'] =
-                              order.map<dynamic>((f) => f.toJson()).toList();
-                          orderData['totalPrice'] = totalPrice;
-                          print(order.length);
-                        });
-                        Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text("Item is removed!")));
-                      }
+                  return Dismissible(
+                    background: new Container(
+                      color: Colors.red,
+                      margin: EdgeInsets.only(bottom: 12.5, top: 12.5),
+                      child: Center(
+                        child: Text(
+                          "Deleting Item",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Lobster",
+                              fontSize: 45.0),
+                        ),
+                      ),
+                    ),
+                    key: Key(order.elementAt(index).name),
+                    onDismissed: (direction) {
+                      this.setState(() {
+                        totalPrice -= order.elementAt(index).totalPrice;
+                        order.removeAt(index);
+                        orderData['items'] =
+                            order.map<dynamic>((f) => f.toJson()).toList();
+                        orderData['totalPrice'] = totalPrice;
+                        print(totalPrice);
+                      });
                     },
+                    child: itemCard.itemsCard(
+                      itemName: order.elementAt(index).name,
+                      itemPrice: order.elementAt(index).price,
+                      itemQty: order.elementAt(index).qty,
+                      onChanged: (int value) {
+                        if (value > 0) {
+                          this.setState(() {
+                            totalPrice =
+                                totalPrice - order.elementAt(index).totalPrice;
+                          });
+                          this.setState(() {
+                            order.elementAt(index).qty = value;
+                            order.elementAt(index).totalPrice =
+                                order.elementAt(index).qty *
+                                    order.elementAt(index).price;
+                          });
+                          this.setState(() {
+                            totalPrice =
+                                totalPrice + order.elementAt(index).totalPrice;
+                          });
+                          this.setState(() {
+                            orderData['items'] =
+                                order.map<dynamic>((f) => f.toJson()).toList();
+                            orderData['totalPrice'] = totalPrice;
+                          });
+                        } else {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                              content:
+                                  Text("Do you want to remove the item?")));
+                        }
+                      },
+                    ),
                   );
                 },
               )
@@ -290,14 +308,17 @@ class _OrderItemsState extends State<OrderItems> {
 }
 
 class SearchMenu extends SearchDelegate<String> {
-  var menuItemsNames = getMenuItems(menu);
+  List<String> menuItemsNames = menu.map((item) => item.name).toList();
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
-      // IconButton(
-      //   icon: Icon(Icons.clear),
-      //   onPressed: () => query = "",
-      // )
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = "";
+          showSuggestions(context);
+        },
+      )
     ];
   }
 
@@ -317,15 +338,9 @@ class SearchMenu extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     final newItem = menu.where((item) => item.name == query);
-    bool canAdd = true;
-    bool isComplete = false;
-    order.forEach((orders) {
-      if (orders.name == newItem.elementAt(0).name) {
-        canAdd = false;
-        return;
-      }
-    });
-    if (canAdd == true) {
+    Widget finalWidget;
+    if (order.map((f) => f.name).toList().contains(newItem.elementAt(0).name) ==
+        false) {
       order.add(new customerOrderData(newItem.elementAt(0).name,
           newItem.elementAt(0).price, 1, newItem.elementAt(0).price));
       orderData['items'] = order.map<dynamic>((f) => f.toJson()).toList();
@@ -333,18 +348,14 @@ class SearchMenu extends SearchDelegate<String> {
       orderData['totalPrice'] = totalPrice;
       DocumentReference documentReference =
           Firestore.instance.collection("orders").document(docID);
-      documentReference.updateData(orderData).whenComplete(() {
-        isComplete = true;
-      }).catchError((error) {
-        print("$error");
-      });
-    } else {
-      print("Can't be Added");
+      documentReference.updateData(orderData);
+      close(context, query);
+    }else{
+      finalWidget = Center(
+        child: Text("Item Not Added."),
+      );
     }
-    // while (!isComplete) {
-    //   return Center(child: CircularProgressIndicator());
-    // }
-    return Container(child: Text("$isComplete"));
+    return finalWidget;
   }
 
   @override
@@ -382,13 +393,4 @@ class SearchMenu extends SearchDelegate<String> {
       },
     );
   }
-}
-
-List<String> getMenuItems(List<menuItem> menus) {
-  List<String> items = List<String>();
-  items = menus.map((menu) {
-    print(menu.name);
-    return menu.name;
-  }).toList();
-  return items;
 }

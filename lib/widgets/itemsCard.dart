@@ -8,7 +8,12 @@ class itemsCard extends StatefulWidget {
   String itemName;
   int itemPrice, itemQty;
   Function onChanged;
-  itemsCard({this.itemName, this.itemPrice, this.itemQty, this.onChanged});
+  itemsCard({
+    this.itemName,
+    this.itemPrice,
+    this.itemQty,
+    this.onChanged,
+  });
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -56,11 +61,14 @@ class _cardState extends State<itemsCard> {
                         color: Colors.white),
                   ),
                 ),
-                StepperTouch(
-                  initialValue: widget.itemQty,
-                  onChanged: widget.onChanged,
-                  withSpring: false,
-                )
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: StepperTouch(
+                    initialValue: widget.itemQty,
+                    onChanged: widget.onChanged,
+                    withSpring: false,
+                  ),
+                ),
               ],
             ),
             Divider(),

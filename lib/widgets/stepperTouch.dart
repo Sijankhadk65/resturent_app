@@ -87,14 +87,10 @@ class _Stepper2State extends State<StepperTouch>
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              _value > 1 ? Positioned(
+              Positioned(
                 left: widget.direction == Axis.horizontal ? 10.0 : null,
                 bottom: widget.direction == Axis.horizontal ? null : 10.0,
                 child: Icon(Icons.remove, size: 12.0, color: Colors.white),
-              ) : Positioned(
-                left: widget.direction == Axis.horizontal ? 10.0 : null,
-                bottom: widget.direction == Axis.horizontal ? null : 10.0,
-                child: Icon(Icons.delete_forever, size: 12.0, color: Colors.white),
               ),
               Positioned(
                 right: widget.direction == Axis.horizontal ? 10.0 : null,
@@ -120,10 +116,10 @@ class _Stepper2State extends State<StepperTouch>
                               child: child, scale: animation);
                         },
                         child: Text(
-                          '${_value >= 0 ? _value : 0 }',
+                          '${_value >= 1 ? _value : 1}',
                           key: ValueKey<int>(_value),
                           style: TextStyle(
-                              color:colorScheme().body2, fontSize: 13.0),
+                              color: colorScheme().body2, fontSize: 13.0),
                         ),
                       ),
                     ),
